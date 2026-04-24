@@ -8,7 +8,9 @@ export type TicketStatus =
   | "Pending Invoicing"
   | "Invoiced";
 export type TicketPriority = "Low" | "Medium" | "High" | "Urgent";
-export type InvoiceStatus = "Draft" | "Sent" | "Paid" | "Void";
+export type InvoiceStatus = "Draft" | "Approved" | "Sending" | "Sent" | "Failed" | "Paid" | "Void";
+export type EmailStatus = "pending" | "sending" | "sent" | "failed";
+export type PaymentMethod = "Check" | "ACH" | "Credit Card" | "Wire" | "Cash" | "Other";
 export type WorkLogApprovalStatus = "Pending Approval" | "Approved" | "Rejected";
 
 export type Database = {
@@ -163,6 +165,15 @@ export type Database = {
           tax_amount: number;
           total_amount: number;
           approved_by: string | null;
+          paid_at: string | null;
+          paid_by: string | null;
+          payment_method: string | null;
+          payment_reference: string | null;
+          payment_notes: string | null;
+          sent_at: string | null;
+          email_status: string | null;
+          email_sent_at: string | null;
+          email_error: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -186,6 +197,15 @@ export type Database = {
           tax_amount?: number;
           total_amount?: number;
           approved_by?: string | null;
+          paid_at?: string | null;
+          paid_by?: string | null;
+          payment_method?: string | null;
+          payment_reference?: string | null;
+          payment_notes?: string | null;
+          sent_at?: string | null;
+          email_status?: string | null;
+          email_sent_at?: string | null;
+          email_error?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -251,6 +271,33 @@ export type Database = {
         };
         Update: Partial<Database["public"]["Tables"]["invoice_settings"]["Insert"]>;
       };
+      payments: {
+        Row: {
+          id: string;
+          invoice_id: string;
+          company_id: string | null;
+          amount: number;
+          payment_method: PaymentMethod;
+          payment_date: string;
+          reference_number: string | null;
+          notes: string | null;
+          recorded_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          invoice_id: string;
+          company_id?: string | null;
+          amount: number;
+          payment_method: PaymentMethod;
+          payment_date: string;
+          reference_number?: string | null;
+          notes?: string | null;
+          recorded_by?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["payments"]["Insert"]>;
+      };
     };
   };
 };
@@ -262,6 +309,7 @@ export type WorkLogRow = Database["public"]["Tables"]["work_logs"]["Row"];
 export type InvoiceRow = Database["public"]["Tables"]["invoices"]["Row"];
 export type InvoiceItemRow = Database["public"]["Tables"]["invoice_items"]["Row"];
 export type InvoiceSettingsRow = Database["public"]["Tables"]["invoice_settings"]["Row"];
+export type PaymentRow = Database["public"]["Tables"]["payments"]["Row"];
 
 export type CompanyRelation = Pick<CompanyRow, "id" | "name">;
 export type CompanyBillingRelation = Pick<
@@ -274,19 +322,24 @@ export type CompanyBillingRelation = Pick<
   | "billing_city"
   | "billing_state"
   | "billing_zip"
+  | "billing_email"
 >;
 export type ProfileRelation = Pick<ProfileRow, "id" | "full_name" | "email" | "role" | "company_id">;
+export type SupportStaffOption = Pick<ProfileRow, "id" | "full_name" | "email">;
 
 export type TicketListItem = Pick<
   TicketRow,
-  "id" | "ticket_number" | "title" | "status" | "created_at" | "priority"
+  "id" | "ticket_number" | "title" | "status" | "created_at" | "priority" | "assigned_to_user_id"
 > & {
   companies: CompanyRelation[] | null;
+  assignee?: Pick<ProfileRow, "full_name">[] | null;
 };
 
 export type TicketDetail = TicketRow & {
   companies: CompanyRelation[] | null;
-  profiles: Pick<ProfileRow, "full_name">[] | null;
+  profiles: Pick<ProfileRow, "full_name" | "email">[] | null;
+  assignee?: Pick<ProfileRow, "id" | "full_name" | "email">[] | null;
+  work_logs?: WorkLogRow[] | null;
 };
 
 export type InvoiceListItem = Pick<
@@ -298,8 +351,16 @@ export type InvoiceListItem = Pick<
 
 export type InvoiceDetail = InvoiceRow & {
   companies: CompanyBillingRelation[] | null;
+  invoice_items: InvoiceItemRow[] | null;
+  payments?: PaymentRow[] | null;
 };
 
 export type UserListItem = Pick<ProfileRow, "id" | "full_name" | "email" | "role" | "is_active"> & {
   companies: CompanyRelation[] | null;
+};
+
+export type CompanyWithBalance = CompanyRow & {
+  outstanding_balance?: number;
+  total_invoiced?: number;
+  total_paid?: number;
 };
