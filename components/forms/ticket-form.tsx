@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input, Textarea } from "@/components/ui/input";
@@ -15,7 +14,6 @@ type TicketFormProps = {
 const PRIORITY_OPTIONS: TicketPriority[] = ["Low", "Medium", "High", "Urgent"];
 
 export function TicketForm({ companyId, userId }: TicketFormProps) {
-  const router = useRouter();
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState<TicketPriority>("Medium");
   const [description, setDescription] = useState("");
@@ -38,8 +36,7 @@ export function TicketForm({ companyId, userId }: TicketFormProps) {
     setSubmitting(false);
 
     if (!error) {
-      router.push("/dashboard/tickets");
-      router.refresh();
+      window.location.href = "/dashboard/tickets";
     }
   }
 

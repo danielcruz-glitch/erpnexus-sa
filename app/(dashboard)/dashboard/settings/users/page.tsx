@@ -1,21 +1,26 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Topbar } from "@/components/layout/topbar";
 import { Card } from "@/components/ui/card";
+import { CreateUserForm } from "@/components/forms/create-user-form";
 import type { UserListItem } from "@/lib/types";
 
 export default async function UsersSettingsPage() {
   const supabase = createAdminClient();
 
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("id,full_name,email,role,is_active,companies!profiles_company_id_fkey(id,name)")
-    .order("full_name");
+  const [usersResult, companiesResult] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("id,full_name,email,role,is_active,companies!profiles_company_id_fkey(id,name)")
+      .order("full_name"),
+    supabase.from("companies").select("id,name").eq("is_active", true).order("name"),
+  ]);
 
-  if (error) {
-    throw new Error(`Failed to load users: ${error.message}`);
+  if (usersResult.error) {
+    throw new Error(`Failed to load users: ${usersResult.error.message}`);
   }
 
-  const users = (data ?? []) as UserListItem[];
+  const users = (usersResult.data ?? []) as UserListItem[];
+  const companies = (companiesResult.data ?? []) as { id: string; name: string }[];
 
   return (
     <div>
@@ -23,6 +28,11 @@ export default async function UsersSettingsPage() {
         title="User management"
         subtitle="Full admin view of roles, activation state, and company assignment."
       />
+
+      <Card className="mb-6 p-6">
+        <h2 className="mb-4 text-lg font-semibold text-white">Create new user</h2>
+        <CreateUserForm companies={companies} />
+      </Card>
 
       <Card className="overflow-hidden">
         <table className="min-w-full text-left text-sm">
@@ -35,7 +45,6 @@ export default async function UsersSettingsPage() {
               <th className="px-6 py-3">Active</th>
             </tr>
           </thead>
-
           <tbody>
             {users.map((user) => (
               <tr key={user.id} className="border-t border-white/5 text-slate-200">
