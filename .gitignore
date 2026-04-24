@@ -8,3 +8,6 @@ node_modules
 *.log
 coverage
 env.d.ts
+
+.vercel
+.env*.local
