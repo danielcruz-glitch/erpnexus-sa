@@ -1,0 +1,5 @@
+import Link from "next/link";
+import { LayoutDashboard, Ticket, Receipt, Settings } from "lucide-react";
+import { Brand } from "./brand";
+const links = [{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },{ href: "/dashboard/tickets", label: "Tickets", icon: Ticket },{ href: "/dashboard/invoices", label: "Invoices", icon: Receipt },{ href: "/dashboard/settings", label: "Settings", icon: Settings }];
+export function Sidebar() { return <aside className="sticky top-0 hidden h-screen w-72 shrink-0 border-r border-white/10 bg-slate-950/70 px-6 py-8 lg:block"><Brand /><nav className="mt-10 space-y-2">{links.map((link) => { const Icon = link.icon; return <Link key={link.href} href={link.href} className="flex items-center gap-3 rounded-2xl border border-transparent px-4 py-3 text-sm text-slate-300 transition hover:border-white/10 hover:bg-white/5 hover:text-white"><Icon className="h-4 w-4" />{link.label}</Link>; })}</nav><div className="mt-10 rounded-2xl border border-cyan-400/20 bg-cyan-400/10 p-4 text-sm text-cyan-100">Designed for ERP support teams that need clear workflow, clean invoicing, and fewer status lies.</div></aside>; }

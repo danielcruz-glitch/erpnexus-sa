@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root { color-scheme: dark; }
+html { background: #08111f; }
+body { min-height: 100vh; background: radial-gradient(circle at top right, rgba(45,212,191,.16), transparent 30%), radial-gradient(circle at top left, rgba(59,130,246,.12), transparent 24%), #08111f; color: #e6f0ff; }
+body::before { content: ""; position: fixed; inset: 0; background-image: linear-gradient(rgba(148,163,184,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(148,163,184,0.08) 1px, transparent 1px); background-size: 36px 36px; mask-image: radial-gradient(circle at center, black, transparent 78%); pointer-events: none; }

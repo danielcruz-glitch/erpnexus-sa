@@ -1,0 +1,1 @@
+insert into public.companies (name, billing_name, billing_city, billing_state, billing_email) values ('C.S. Brown Company Inc.', 'C.S. Brown Company Inc.', 'Bronx', 'NY', 'billing@csbrown.example'), ('Chelsea Building Supply', 'Chelsea Building Supply', 'New York', 'NY', 'ap@chelsea.example') on conflict (name) do nothing;
