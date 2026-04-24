@@ -30,7 +30,7 @@ export default async function TicketDetailPage({ params }: TicketDetailPageProps
       supabase.from("profiles").select("role").eq("id", user.id).single(),
       supabase
         .from("tickets")
-        .select("*, companies(id,name), profiles(full_name)")
+        .select("*, companies!tickets_company_id_fkey(id,name), profiles(full_name)")
         .eq("id", id)
         .single(),
     ]);

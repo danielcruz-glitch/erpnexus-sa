@@ -11,7 +11,7 @@ export default async function TicketsPage() {
 
   const { data, error } = await supabase
     .from("tickets")
-    .select("id,ticket_number,title,status,created_at,priority,companies(id,name)")
+    .select("id,ticket_number,title,status,created_at,priority,companies!tickets_company_id_fkey(id,name)")
     .neq("status", "Invoiced")
     .order("created_at", { ascending: false });
 

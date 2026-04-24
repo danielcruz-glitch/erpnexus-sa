@@ -10,7 +10,7 @@ export default async function InvoicesPage() {
 
   const { data, error } = await supabase
     .from("invoices")
-    .select("id,invoice_number,status,total_amount,created_at,due_date,companies(id,name)")
+    .select("id,invoice_number,status,total_amount,created_at,due_date,companies!invoices_company_id_fkey(id,name)")
     .order("created_at", { ascending: false });
 
   if (error) {

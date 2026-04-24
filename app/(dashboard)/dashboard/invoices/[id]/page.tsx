@@ -22,7 +22,7 @@ export default async function InvoiceDetailPage({
 
   const { data, error } = await supabase
     .from("invoices")
-    .select("*, companies(name)")
+    .select("*, companies!invoices_company_id_fkey(name)")
     .eq("id", id)
     .single();
 

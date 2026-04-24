@@ -8,7 +8,7 @@ export default async function UsersSettingsPage() {
 
   const { data, error } = await supabase
     .from("profiles")
-    .select("id,full_name,email,role,is_active,companies(id,name)")
+    .select("id,full_name,email,role,is_active,companies!profiles_company_id_fkey(id,name)")
     .order("full_name");
 
   if (error) {

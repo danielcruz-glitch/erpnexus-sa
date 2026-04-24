@@ -23,7 +23,7 @@ export default async function DashboardPage() {
         .eq("status", "Pending Invoicing"),
       supabase
         .from("tickets")
-        .select("id,ticket_number,title,status,created_at,priority,companies(id,name)")
+        .select("id,ticket_number,title,status,created_at,priority,companies!tickets_company_id_fkey(id,name)")
         .order("created_at", { ascending: false })
         .limit(8),
     ]);
